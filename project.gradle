@@ -21,7 +21,7 @@
  * Project-specific settings. Unfortunately we cannot put the name in there!
  */
 group = "com.github.java-json-tools";
-version = "1.2.15";
+version = "1.2.16";
 java {
     sourceCompatibility = JavaVersion.VERSION_17;
     targetCompatibility = JavaVersion.VERSION_17; // defaults to sourceCompatibility
@@ -35,25 +35,17 @@ project.ext {
  * List of dependencies
  */
 dependencies {
-    compileOnly platform("tools.jackson:jackson-bom:3.1.0")
-    compileOnly ("tools.jackson.core:jackson-databind")
-    compileOnly (group: "com.google.guava", name: "guava", version: "28.2-android")
-    compileOnly (group: "com.github.java-json-tools", name: "jackson-coreutils", version: "2.1")
-    compileOnly (group: "com.github.java-json-tools", name: "jackson-coreutils-equivalence", version: "1.1")
-    compileOnly (group: "com.github.java-json-tools", name: "uri-template", version: "0.10")
+    implementation platform("tools.jackson:jackson-bom:3.1.0")
+    implementation ("tools.jackson.core:jackson-databind")
+    implementation ("com.google.guava:guava:28.2-android")
+    implementation ("com.github.java-json-tools:jackson-coreutils:2.1")
+    implementation ("com.github.java-json-tools:jackson-coreutils-equivalence:1.1")
+    implementation ("com.github.java-json-tools:uri-template:0.10")
+    implementation ("com.github.java-json-tools:msg-simple:1.2")
     // FIXME: no javadoc
     // FIXME: update beyond 1.7.7.x once we're Java 8 or better.
-    compileOnly (group: "org.mozilla", name: "rhino", version: "1.7.7.2");
-    compileOnly (group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2")
-
-    testImplementation platform("tools.jackson:jackson-bom:3.1.0")
-    testImplementation ("tools.jackson.core:jackson-databind")
-    testImplementation ("tools.jackson.core:jackson-core")
-    testImplementation ("com.google.guava:guava:28.2-android")
-    testImplementation ("com.github.java-json-tools:jackson-coreutils:2.1")
-    testImplementation ("com.github.java-json-tools:msg-simple:1.2")
-    testImplementation ("com.github.java-json-tools:uri-template:0.10")
-    testImplementation ("org.mozilla:rhino:1.7.7.2")
+    implementation (group: "org.mozilla", name: "rhino", version: "1.7.7.2");
+    implementation (group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2")
     testImplementation (group: "org.testng", name: "testng", version: "7.12.0") {
         exclude(group: "junit", module: "junit");
         exclude(group: "org.beanshell", module: "bsh");

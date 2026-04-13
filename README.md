@@ -36,7 +36,7 @@ gratefully accepted.
 
 ## Versions
 
-The current stable verson is **1.2.14**
+The current stable verson is **1.2.15**
 ([ChangeLog](https://github.com/java-json-tools/json-schema-core/wiki/ChangeLog_12x),
 [Javadoc](http://java-json-tools.github.io/json-schema-core/1.2.x/index.html)).
 
@@ -53,7 +53,7 @@ For gradle, use:
 
 ```
 dependencies {
-    compile(group: "com.github.java-json-tools", name: "json-schema-core", version: "1.2.14");
+    compile(group: "com.github.java-json-tools", name: "json-schema-core", version: "1.2.15");
 }
 ```
 
@@ -63,7 +63,7 @@ For maven:
 <dependency>
     <groupId>com.github.java-json-tools</groupId>
     <artifactId>json-schema-core</artifactId>
-    <version>1.2.14</version>
+    <version>1.2.15</version>
 </dependency>
 ```
 
