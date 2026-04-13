@@ -76,7 +76,7 @@ public final class MediaSyntaxChecker
         subNode = node.path(BINARY_ENCODING_FIELDNAME);
         if (!subNode.isMissingNode()) {
             type = Jackson3Compat.getNodeType(subNode);
-            value = subNode.stringValue();
+            value = subNode.stringValueOpt().orElse(null);
             if (value == null)
                 report.error(newMsg(tree, bundle,
                     "draftv4.media.binaryEncoding.incorrectType")

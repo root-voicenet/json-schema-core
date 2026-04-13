@@ -52,7 +52,7 @@ public final class SampleNodeProvider
         SAMPLE_DATA.put(NodeType.NUMBER,
             FACTORY.numberNode(new BigDecimal("1.1")));
         SAMPLE_DATA.put(NodeType.OBJECT, FACTORY.objectNode());
-        SAMPLE_DATA.put(NodeType.STRING, FACTORY.textNode(""));
+        SAMPLE_DATA.put(NodeType.STRING, FACTORY.stringNode(""));
     }
 
 

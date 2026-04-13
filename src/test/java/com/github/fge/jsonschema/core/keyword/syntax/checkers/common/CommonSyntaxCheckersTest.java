@@ -19,15 +19,15 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.common;
 
-import tools.jackson.core.JsonProcessingException;
 import com.github.fge.jsonschema.core.keyword.syntax.checkers.SyntaxCheckersTest;
 import com.github.fge.jsonschema.core.keyword.syntax.dictionaries.CommonSyntaxCheckerDictionary;
+import tools.jackson.core.JacksonException;
 
 public abstract class CommonSyntaxCheckersTest
     extends SyntaxCheckersTest
 {
     protected CommonSyntaxCheckersTest(final String keyword)
-        throws JsonProcessingException
+        throws JacksonException
     {
         super(CommonSyntaxCheckerDictionary.get(), "common", keyword);
     }

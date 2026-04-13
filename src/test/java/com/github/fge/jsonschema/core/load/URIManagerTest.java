@@ -19,10 +19,6 @@
 
 package com.github.fge.jsonschema.core.load;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import tools.jackson.core.JsonParser;
-import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonNumEquals;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
@@ -34,15 +30,18 @@ import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.load.MessageBundles;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import tools.jackson.databind.JsonNode;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import static com.github.fge.jsonschema.matchers.ProcessingMessageAssert.*;
+import static com.github.fge.jsonschema.matchers.ProcessingMessageAssert.assertMessage;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertTrue;
+import static tools.jackson.core.json.JsonReadFeature.*;
 
 public final class URIManagerTest
 {
@@ -125,7 +124,7 @@ public final class URIManagerTest
 
     @Test
     void managerParsesNonstandardJSON()
-        throws IOException, ProcessingException
+        throws ProcessingException
     {
         // get resource URIs for standard and nonstandard sources
         final String wellFormed = "resource:/load/standard-source.json";
@@ -135,9 +134,9 @@ public final class URIManagerTest
 
         // get URIManager configured to parse nonstandard sources
         final LoadingConfiguration cfg = LoadingConfiguration.newBuilder()
-            .addParserFeature(JsonParser.Feature.ALLOW_COMMENTS)
-            .addParserFeature(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
-            .addParserFeature(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
+            .addJsonReadFeature(ALLOW_JAVA_COMMENTS)
+            .addJsonReadFeature(ALLOW_SINGLE_QUOTES)
+            .addJsonReadFeature(ALLOW_UNQUOTED_PROPERTY_NAMES)
             .freeze();
         final URIManager manager = new URIManager(cfg);
 

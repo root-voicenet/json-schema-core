@@ -60,7 +60,7 @@ public final class CanonicalSchemaTreeTest
 
         for (final JsonNode lookup: lookups)
             set.add(new Object[] {
-                JsonRef.fromString(lookup.get("id").textValue())
+                JsonRef.fromString(lookup.get("id").stringValue())
             });
 
         return set.iterator();

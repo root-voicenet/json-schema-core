@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright (c) 2014, Francis Galiegue (fgaliegue@gmail.com)
  *
  * This software is dual-licensed under:
@@ -31,8 +31,6 @@ apply(plugin: "java");
 apply(plugin: "maven-publish");
 apply(plugin: "signing");
 apply(plugin: "biz.aQute.bnd.builder");
-apply(plugin: "idea");
-apply(plugin: "eclipse");
 
 apply(from: "project.gradle");
 
@@ -45,20 +43,12 @@ ext.forRelease = !version.endsWith("-SNAPSHOT");
  */
 repositories {
     mavenCentral();
-    if (!forRelease) {
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
+    maven {
+        credentials {
+            username = project.properties['repoUsername']
+            password = project.properties['repoPassword']
         }
-    }
-    /* Allow staging references for last pre-release testing. */
-    if (project.properties.containsKey("sonatypeUsername")) {
-        maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username = project.properties["sonatypeUsername"]
-                password = project.properties["sonatypePassword"]
-            }
-        }
+        url = project.properties['repoUrl']
     }
 }
 
@@ -171,8 +161,32 @@ task checkSigningRequirements {
                     }
                 }
             }
+
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+                groupId = project.group.toString()
+                artifactId = "${project.name}"
+                version = project.version.toString()
+                from(components["java"])
+            }
         }
     }
+
+     repositories {
+         mavenLocal()
+         maven {
+             credentials {
+                 username = project.properties['repoUsername']
+                 password = project.properties['repoPassword']
+             }
+             url = project.properties['repoUrl']
+         }
+     }
 }
 
 signing {

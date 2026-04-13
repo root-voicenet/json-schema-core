@@ -19,15 +19,15 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv4;
 
-import tools.jackson.core.JsonProcessingException;
 import com.github.fge.jsonschema.core.keyword.syntax.checkers.SyntaxCheckersTest;
 import com.github.fge.jsonschema.core.keyword.syntax.dictionaries.DraftV4SyntaxCheckerDictionary;
+import tools.jackson.core.JacksonException;
 
 public abstract class DraftV4SyntaxCheckersTest
     extends SyntaxCheckersTest
 {
     protected DraftV4SyntaxCheckersTest(final String keyword)
-        throws JsonProcessingException
+        throws JacksonException
     {
         super(DraftV4SyntaxCheckerDictionary.get(), "draftv4", keyword);
     }

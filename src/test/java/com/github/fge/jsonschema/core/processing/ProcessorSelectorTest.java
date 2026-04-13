@@ -33,10 +33,11 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
-import static com.github.fge.jsonschema.TestUtils.*;
-import static com.github.fge.jsonschema.matchers.ProcessingMessageAssert.*;
+import static com.github.fge.jsonschema.TestUtils.onlyOnce;
+import static com.github.fge.jsonschema.matchers.ProcessingMessageAssert.assertMessage;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 public final class ProcessorSelectorTest
 {
@@ -154,10 +155,10 @@ public final class ProcessorSelectorTest
         processor.process(report, input);
 
         verify(processor1, onlyOnce()).process(same(report), same(input));
-        verifyZeroInteractions(processor2, byDefault);
+        verifyNoMoreInteractions(processor2, byDefault);
 
         for (final Processor<In, Out> p: otherProcessors)
-            verifyZeroInteractions(p);
+            verifyNoMoreInteractions(p);
     }
 
     @Test
@@ -173,9 +174,9 @@ public final class ProcessorSelectorTest
         processor.process(report, input);
 
         verify(processor2, onlyOnce()).process(same(report), same(input));
-        verifyZeroInteractions(processor1, byDefault);
+        verifyNoMoreInteractions(processor1, byDefault);
         for (final Processor<In, Out> p: otherProcessors)
-            verifyZeroInteractions(p);
+            verifyNoMoreInteractions(p);
     }
 
     @Test
@@ -190,9 +191,9 @@ public final class ProcessorSelectorTest
             processor.process(report, input);
             fail("No exception thrown!!");
         } catch (ProcessingException e) {
-            verifyZeroInteractions(processor1, processor2);
+            verifyNoMoreInteractions(processor1, processor2);
             for (final Processor<In, Out> p: otherProcessors)
-                verifyZeroInteractions(p);
+                verifyNoMoreInteractions(p);
             assertMessage(e.getProcessingMessage())
                 .hasMessage(BUNDLE.getMessage("processing.noProcessor"));
         }
@@ -210,11 +211,11 @@ public final class ProcessorSelectorTest
 
         processor.process(report, input);
 
-        verifyZeroInteractions(processor1, processor2);
+        verifyNoMoreInteractions(processor1, processor2);
         verify(byDefault, onlyOnce()).process(report, input);
 
         for (final Processor<In, Out> p: otherProcessors)
-            verifyZeroInteractions(p);
+            verifyNoMoreInteractions(p);
     }
 
     private interface In extends MessageProvider

@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.hyperschema.draftv4;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class LinksTest
     extends DraftV4HyperSchemaSyntaxCheckersTest
 {
     public LinksTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("links");
     }

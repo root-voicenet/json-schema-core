@@ -86,7 +86,7 @@ public final class ProcessingMessageAssert
         final T value)
     {
         assertThat(msg.has(name)).isTrue();
-        final String input = msg.get(name).textValue();
+        final String input = msg.get(name).stringValue();
         final String expected = value.toString();
         assertThat(input)
             .overridingErrorMessage("Strings differ: wanted " + expected
@@ -110,7 +110,7 @@ public final class ProcessingMessageAssert
 
     public ProcessingMessageAssert hasTextField(final String name)
     {
-        assertTrue(msg.path(name).isTextual());
+        assertTrue(msg.path(name).isString());
         return this;
     }
 
@@ -137,7 +137,7 @@ public final class ProcessingMessageAssert
 
     public ProcessingMessageAssert hasMessage(final String expected)
     {
-        final String message = msg.get("message").textValue();
+        final String message = msg.get("message").stringValue();
         assertThat(message).isEqualTo(expected);
         return this;
     }

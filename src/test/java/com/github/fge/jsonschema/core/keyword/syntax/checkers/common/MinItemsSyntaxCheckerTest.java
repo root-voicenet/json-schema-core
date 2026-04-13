@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.common;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class MinItemsSyntaxCheckerTest
     extends CommonSyntaxCheckersTest
 {
     public MinItemsSyntaxCheckerTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("minItems");
     }

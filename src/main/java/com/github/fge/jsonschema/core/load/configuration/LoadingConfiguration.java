@@ -20,6 +20,8 @@
 package com.github.fge.jsonschema.core.load.configuration;
 
 import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.json.JsonReadFeature;
+import tools.jackson.core.util.JacksonFeature;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import com.github.fge.Frozen;
@@ -32,6 +34,7 @@ import com.github.fge.jsonschema.core.load.uri.URITranslatorConfiguration;
 import com.github.fge.jsonschema.core.tree.CanonicalSchemaTree;
 import com.github.fge.jsonschema.core.tree.InlineSchemaTree;
 import com.google.common.collect.ImmutableMap;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.net.URI;
 import java.util.EnumSet;
@@ -115,6 +118,7 @@ public final class LoadingConfiguration
      * ObjectReader instances used to load schemas</p>
      */
     final EnumSet<StreamReadFeature> parserFeatures;
+    final EnumSet<JsonReadFeature> jsonReadFeatures;
 
     /**
      * ObjectMapper configured with enabled parser features.
@@ -157,6 +161,7 @@ public final class LoadingConfiguration
         dereferencing = builder.dereferencing;
         preloadedSchemas = ImmutableMap.copyOf(builder.preloadedSchemas);
         parserFeatures = EnumSet.copyOf(builder.parserFeatures);
+        jsonReadFeatures = EnumSet.copyOf(builder.jsonReadFeatures);
         reader = buildReader();
         cacheSize = builder.cacheSize;
     }
@@ -168,12 +173,16 @@ public final class LoadingConfiguration
      */
     private ObjectMapper buildReader()
     {
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper.Builder builder = JsonMapper.builder();
 
         // enable JsonParser feature configurations
         for (final StreamReadFeature feature : parserFeatures)
-            mapper = mapper.rebuild().configure(feature, true).build();
-        return mapper;
+            builder = builder.configure(feature, true);
+
+        for (final JsonReadFeature feature : jsonReadFeatures)
+            builder = builder.enable(feature);
+
+        return builder.build();
     }
 
     /**

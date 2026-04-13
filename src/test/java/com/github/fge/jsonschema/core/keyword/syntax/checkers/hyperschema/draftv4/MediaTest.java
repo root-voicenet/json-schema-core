@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.hyperschema.draftv4;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class MediaTest
     extends DraftV4HyperSchemaSyntaxCheckersTest
 {
     public MediaTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("media");
     }

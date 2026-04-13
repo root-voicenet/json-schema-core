@@ -21,7 +21,7 @@
  * Project-specific settings. Unfortunately we cannot put the name in there!
  */
 group = "com.github.java-json-tools";
-version = "1.2.14";
+version = "1.2.15";
 java {
     sourceCompatibility = JavaVersion.VERSION_17;
     targetCompatibility = JavaVersion.VERSION_17; // defaults to sourceCompatibility
@@ -37,24 +37,30 @@ project.ext {
 dependencies {
     compileOnly platform("tools.jackson:jackson-bom:3.1.0")
     compileOnly ("tools.jackson.core:jackson-databind")
-    // Transitional classpath for libraries still compiled against jackson 2 annotations/databind.
-    compileOnly ("com.fasterxml.jackson.core:jackson-databind:2.21.0")
-    compileOnly (group: "com.google.guava", name: "guava", version: "28.2-android");
-    compileOnly (group: "com.github.java-json-tools", name: "jackson-coreutils", version: "2.0");
-    compileOnly (group: "com.github.java-json-tools", name: "jackson-coreutils-equivalence", version: "1.0");
-    compileOnly (group: "com.github.java-json-tools", name: "uri-template", version: "0.10");
+    compileOnly (group: "com.google.guava", name: "guava", version: "28.2-android")
+    compileOnly (group: "com.github.java-json-tools", name: "jackson-coreutils", version: "2.1")
+    compileOnly (group: "com.github.java-json-tools", name: "jackson-coreutils-equivalence", version: "1.1")
+    compileOnly (group: "com.github.java-json-tools", name: "uri-template", version: "0.10")
     // FIXME: no javadoc
     // FIXME: update beyond 1.7.7.x once we're Java 8 or better.
     compileOnly (group: "org.mozilla", name: "rhino", version: "1.7.7.2");
-    compileOnly (group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2");
-    testCompileOnly (group: "org.testng", name: "testng", version: "7.1.0") {
+    compileOnly (group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2")
+
+    testImplementation platform("tools.jackson:jackson-bom:3.1.0")
+    testImplementation ("tools.jackson.core:jackson-databind")
+    testImplementation ("tools.jackson.core:jackson-core")
+    testImplementation ("com.google.guava:guava:28.2-android")
+    testImplementation ("com.github.java-json-tools:jackson-coreutils:2.1")
+    testImplementation ("com.github.java-json-tools:msg-simple:1.2")
+    testImplementation ("com.github.java-json-tools:uri-template:0.10")
+    testImplementation ("org.mozilla:rhino:1.7.7.2")
+    testImplementation (group: "org.testng", name: "testng", version: "7.12.0") {
         exclude(group: "junit", module: "junit");
         exclude(group: "org.beanshell", module: "bsh");
         exclude(group: "org.yaml", module: "snakeyaml");
     };
-    testCompileOnly(group: "org.mockito", name: "mockito-core", version: "2.28.2");
-    // FIXME: update to 3.x once we're off of Java 7.
-    testCompileOnly(group: "org.assertj", name: "assertj-core", version: "2.9.1");
+    testImplementation(group: "org.mockito", name: "mockito-core", version: "5.23.0")
+    testImplementation(group: "org.assertj", name: "assertj-core", version: "2.9.1")
 }
 
 javadoc {

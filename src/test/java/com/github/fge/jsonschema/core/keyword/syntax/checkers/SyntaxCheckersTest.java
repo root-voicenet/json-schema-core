@@ -19,11 +19,6 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers;
 
-import tools.jackson.core.JsonProcessingException;
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.node.ArrayNode;
-import tools.jackson.databind.node.MissingNode;
-import tools.jackson.databind.node.ObjectNode;
 import com.github.fge.jackson.JacksonUtils;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jackson.NodeType;
@@ -31,31 +26,37 @@ import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jackson.jsonpointer.JsonPointerException;
 import com.github.fge.jsonschema.SampleNodeProvider;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.tree.key.SchemaKey;
-import com.github.fge.jsonschema.core.util.Dictionary;
 import com.github.fge.jsonschema.core.messages.JsonSchemaSyntaxMessageBundle;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.core.tree.CanonicalSchemaTree;
 import com.github.fge.jsonschema.core.tree.SchemaTree;
+import com.github.fge.jsonschema.core.tree.key.SchemaKey;
+import com.github.fge.jsonschema.core.util.Dictionary;
 import com.github.fge.msgsimple.bundle.MessageBundle;
 import com.github.fge.msgsimple.load.MessageBundles;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import org.mockito.ArgumentCaptor;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.testng.collections.Lists;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.MissingNode;
+import tools.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.github.fge.jsonschema.TestUtils.*;
-import static com.github.fge.jsonschema.matchers.ProcessingMessageAssert.*;
+import static com.github.fge.jsonschema.TestUtils.anyMessage;
+import static com.github.fge.jsonschema.matchers.ProcessingMessageAssert.assertMessage;
 import static org.mockito.Mockito.*;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 @Test
 public abstract class SyntaxCheckersTest
@@ -96,11 +97,11 @@ public abstract class SyntaxCheckersTest
      * @param dict the {@link Dictionary} of {@link SyntaxChecker}s
      * @param prefix the prefix to use for resource files
      * @param keyword the keyword to test
-     * @throws JsonProcessingException source JSON (if any) is not legal JSON
+     * @throws JacksonException source JSON (if any) is not legal JSON
      */
     protected SyntaxCheckersTest(final Dictionary<SyntaxChecker> dict,
         final String prefix, final String keyword)
-        throws JsonProcessingException
+        throws JacksonException
     {
         this.keyword = keyword;
         checker = dict.entries().get(keyword);
@@ -119,7 +120,7 @@ public abstract class SyntaxCheckersTest
             final JsonNode data = JsonLoader.fromResource(resource);
             valueTestsNode = data.path("valueTests");
             pointerTestsNode = data.path("pointerTests");
-        } catch (JsonProcessingException oops) {
+        } catch (JacksonException oops) {
             throw oops;
         } catch (IOException ignored) {
             valueTestsNode = MissingNode.getInstance();
@@ -203,7 +204,7 @@ public abstract class SyntaxCheckersTest
             msgParams = node.get("msgParams");
             msgData = node.get("msgData");
             msg = msgNode == null ? null
-                : buildMessage(msgNode.textValue(), msgParams, msgData);
+                : buildMessage(msgNode.stringValue(), msgParams, msgData);
             list.add(new Object[]{ node.get("schema"), msg,
                 node.get("valid").booleanValue(), msgData });
         }
@@ -274,7 +275,7 @@ public abstract class SyntaxCheckersTest
 
         final List<JsonPointer> expected = Lists.newArrayList();
         for (final JsonNode node: expectedPointers)
-            expected.add(new JsonPointer(node.textValue()));
+            expected.add(new JsonPointer(node.stringValue()));
 
         assertEquals(pointers, expected);
     }
@@ -299,7 +300,7 @@ public abstract class SyntaxCheckersTest
             String name;
             JsonNode value;
             for (final JsonNode node: params) {
-                name = node.textValue();
+                name = node.stringValue();
                 value = data.get(name);
                 message.putArgument(name, valueToArgument(value));
             }
@@ -313,7 +314,7 @@ public abstract class SyntaxCheckersTest
 
         switch (type) {
             case STRING:
-                return value.textValue();
+                return value.stringValue();
             case INTEGER:
                 return value.bigIntegerValue();
             case NUMBER: case NULL:

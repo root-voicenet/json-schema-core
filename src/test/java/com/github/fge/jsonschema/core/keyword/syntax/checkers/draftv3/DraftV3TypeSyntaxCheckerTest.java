@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv3;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class DraftV3TypeSyntaxCheckerTest
     extends DraftV3SyntaxCheckersTest
 {
     public DraftV3TypeSyntaxCheckerTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("type");
     }

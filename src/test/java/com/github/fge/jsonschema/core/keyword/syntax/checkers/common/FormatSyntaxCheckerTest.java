@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.common;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class FormatSyntaxCheckerTest
     extends CommonSyntaxCheckersTest
 {
     public FormatSyntaxCheckerTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("format");
     }

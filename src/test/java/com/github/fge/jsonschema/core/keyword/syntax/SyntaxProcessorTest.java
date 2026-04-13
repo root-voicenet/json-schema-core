@@ -152,7 +152,7 @@ public final class SyntaxProcessorTest
                 @Override
                 public String apply(final JsonNode input)
                 {
-                    return input.textValue();
+                    return input.stringValue();
                 }
             });
 

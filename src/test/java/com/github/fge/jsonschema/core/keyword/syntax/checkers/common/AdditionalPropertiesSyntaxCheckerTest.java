@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.common;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class AdditionalPropertiesSyntaxCheckerTest
     extends CommonSyntaxCheckersTest
 {
     public AdditionalPropertiesSyntaxCheckerTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("additionalProperties");
     }

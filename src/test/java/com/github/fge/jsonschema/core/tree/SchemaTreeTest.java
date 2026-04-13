@@ -116,8 +116,8 @@ public final class SchemaTreeTest
 
         for (final JsonNode element: node)
             set.add(new Object[] {
-                element.get("pointer").textValue(),
-                element.get("scope").textValue()
+                element.get("pointer").stringValue(),
+                element.get("scope").stringValue()
             });
 
         return set.iterator();
@@ -207,7 +207,7 @@ public final class SchemaTreeTest
     public void nonAbsoluteDollarSchemasYieldAnEmptyRef(final String s)
     {
         final ObjectNode testNode = FACTORY.objectNode();
-        testNode.set("$schema", FACTORY.textNode(s));
+        testNode.set("$schema", FACTORY.stringNode(s));
 
         final SchemaTree tree
             = new CanonicalSchemaTree(SchemaKey.anonymousKey(), testNode);
@@ -231,7 +231,7 @@ public final class SchemaTreeTest
     {
         final JsonRef ref = JsonRef.fromString(s);
         final ObjectNode testNode = FACTORY.objectNode();
-        testNode.set("$schema", FACTORY.textNode(s));
+        testNode.set("$schema", FACTORY.stringNode(s));
 
         final SchemaTree tree
             = new CanonicalSchemaTree(SchemaKey.anonymousKey(), testNode);

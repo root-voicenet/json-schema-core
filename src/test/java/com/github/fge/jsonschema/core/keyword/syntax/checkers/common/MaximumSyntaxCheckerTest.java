@@ -19,13 +19,13 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.common;
 
-import tools.jackson.core.JsonProcessingException;
+import tools.jackson.core.JacksonException;
 
 public final class MaximumSyntaxCheckerTest
     extends CommonSyntaxCheckersTest
 {
     public MaximumSyntaxCheckerTest()
-        throws JsonProcessingException
+        throws JacksonException
     {
         super("maximum");
     }

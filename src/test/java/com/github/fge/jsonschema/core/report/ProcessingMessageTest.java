@@ -105,7 +105,7 @@ public final class ProcessingMessageTest
     public void settingAnyObjectSetsToString()
     {
         final Object foo = new Object();
-        final JsonNode node = FACTORY.textNode(foo.toString());
+        final JsonNode node = FACTORY.stringNode(foo.toString());
         final ProcessingMessage msg = new ProcessingMessage().put("foo", foo);
 
         assertMessage(msg).hasField("foo", node);
@@ -247,7 +247,7 @@ public final class ProcessingMessageTest
         final ProcessingMessage message = new ProcessingMessage()
             .setMessage("Hello %s!").putArgument("greeted", "world");
 
-        assertEquals(message.asJson().get("message").textValue(),
+        assertEquals(message.asJson().get("message").stringValue(),
             "Hello world!");
     }
 

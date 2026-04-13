@@ -19,15 +19,15 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.hyperschema.draftv4;
 
-import tools.jackson.core.JsonProcessingException;
 import com.github.fge.jsonschema.core.keyword.syntax.checkers.SyntaxCheckersTest;
 import com.github.fge.jsonschema.core.keyword.syntax.dictionaries.DraftV4HyperSchemaSyntaxCheckerDictionary;
+import tools.jackson.core.JacksonException;
 
 public abstract class DraftV4HyperSchemaSyntaxCheckersTest
     extends SyntaxCheckersTest
 {
     protected DraftV4HyperSchemaSyntaxCheckersTest(final String keyword)
-        throws JsonProcessingException
+        throws JacksonException
     {
         super(DraftV4HyperSchemaSyntaxCheckerDictionary.get(),
             "hyperschema/draftv4", keyword);

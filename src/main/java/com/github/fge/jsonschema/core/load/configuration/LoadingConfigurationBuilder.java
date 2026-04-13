@@ -20,6 +20,7 @@
 package com.github.fge.jsonschema.core.load.configuration;
 
 import tools.jackson.core.StreamReadFeature;
+import tools.jackson.core.json.JsonReadFeature;
 import tools.jackson.databind.JsonNode;
 import com.github.fge.Thawed;
 import com.github.fge.jsonschema.SchemaVersion;
@@ -47,25 +48,30 @@ import static tools.jackson.core.StreamReadFeature.*;
  * @see LoadingConfiguration
  */
 public final class LoadingConfigurationBuilder
-    implements Thawed<LoadingConfiguration>
-{
+        implements Thawed<LoadingConfiguration> {
     private static final MessageBundle BUNDLE
-        = MessageBundles.getBundle(JsonSchemaCoreMessageBundle.class);
+            = MessageBundles.getBundle(JsonSchemaCoreMessageBundle.class);
 
     /**
      * Default JsonParser feature set. Unfortunately, Jackson does not use
      * EnumSets to collect them, so we have to do that...
      */
     private static final EnumSet<StreamReadFeature> DEFAULT_PARSER_FEATURES;
-    
+    private static final EnumSet<JsonReadFeature> DEFAULT_JSON_READ_FEATURES;
+
     private static final int DEFAULT_CACHE_SIZE = 512;
 
     static {
         DEFAULT_PARSER_FEATURES = EnumSet.noneOf(StreamReadFeature.class);
 
-        for (final StreamReadFeature feature: StreamReadFeature.values())
+        for (final StreamReadFeature feature : StreamReadFeature.values())
             if (feature.enabledByDefault())
                 DEFAULT_PARSER_FEATURES.add(feature);
+
+        DEFAULT_JSON_READ_FEATURES = EnumSet.noneOf(JsonReadFeature.class);
+        for (final JsonReadFeature feature : JsonReadFeature.values())
+            if (feature.enabledByDefault())
+                DEFAULT_JSON_READ_FEATURES.add(feature);
     }
 
     /**
@@ -106,19 +112,21 @@ public final class LoadingConfigurationBuilder
      */
     final EnumSet<StreamReadFeature> parserFeatures;
 
+    final EnumSet<JsonReadFeature> jsonReadFeatures;
+
     /**
      * Return a new, default mutable loading configuration
      *
      * @see LoadingConfiguration#newBuilder()
      */
-    LoadingConfigurationBuilder()
-    {
+    LoadingConfigurationBuilder() {
         translatorCfg = URITranslatorConfiguration.byDefault();
         dereferencing = Dereferencing.CANONICAL;
         preloadedSchemas = Maps.newHashMap();
-        for (final SchemaVersion version: SchemaVersion.values())
+        for (final SchemaVersion version : SchemaVersion.values())
             preloadedSchemas.put(version.getLocation(), version.getSchema());
         parserFeatures = EnumSet.copyOf(DEFAULT_PARSER_FEATURES);
+        jsonReadFeatures = EnumSet.copyOf(DEFAULT_JSON_READ_FEATURES);
     }
 
     /**
@@ -127,31 +135,29 @@ public final class LoadingConfigurationBuilder
      * @param cfg the frozen configuration
      * @see LoadingConfiguration#thaw()
      */
-    LoadingConfigurationBuilder(final LoadingConfiguration cfg)
-    {
+    LoadingConfigurationBuilder(final LoadingConfiguration cfg) {
         downloaders.putAll(cfg.downloaders);
         translatorCfg = cfg.translatorCfg;
         dereferencing = cfg.dereferencing;
         preloadedSchemas = Maps.newHashMap(cfg.preloadedSchemas);
         parserFeatures = EnumSet.copyOf(cfg.parserFeatures);
+        jsonReadFeatures = EnumSet.copyOf(cfg.jsonReadFeatures);
         cacheSize = cfg.cacheSize;
     }
-    
+
     /**
      * Should we enable caching of downloaded schemas
-     * 
-     * @deprecated Just for backward compatibility
-     *     Use cacheSize setter instead to set the maximum size of the cache
      *
-     * <p>Note that this does <b>not</b> affect preloaded schemas</p>
-     * 
      * @param enableCache if loaded schemas have to be cached
      * @return this
+     * @deprecated Just for backward compatibility
+     * Use cacheSize setter instead to set the maximum size of the cache
+     *
+     * <p>Note that this does <b>not</b> affect preloaded schemas</p>
      */
     @Deprecated
-    public LoadingConfigurationBuilder setEnableCache(final boolean enableCache)
-    {
-    	this.cacheSize = enableCache ? DEFAULT_CACHE_SIZE : 0;
+    public LoadingConfigurationBuilder setEnableCache(final boolean enableCache) {
+        this.cacheSize = enableCache ? DEFAULT_CACHE_SIZE : 0;
         return this;
     }
 
@@ -164,24 +170,22 @@ public final class LoadingConfigurationBuilder
      * @param cacheSize if loaded schemas have to be cached
      * @return this
      */
-    public LoadingConfigurationBuilder setCacheSize(final int cacheSize)
-    {
+    public LoadingConfigurationBuilder setCacheSize(final int cacheSize) {
         this.cacheSize = cacheSize;
         return this;
     }
-    
+
     /**
      * Add a new URI downloader
      *
-     * @param scheme the scheme
+     * @param scheme     the scheme
      * @param downloader the downloader
      * @return this
-     * @throws NullPointerException scheme or downloader is null
+     * @throws NullPointerException     scheme or downloader is null
      * @throws IllegalArgumentException illegal scheme
      */
     public LoadingConfigurationBuilder addScheme(final String scheme,
-        final URIDownloader downloader)
-    {
+                                                 final URIDownloader downloader) {
         downloaders.put(scheme, downloader);
         return this;
     }
@@ -192,8 +196,7 @@ public final class LoadingConfigurationBuilder
      * @param scheme the scheme
      * @return this
      */
-    public LoadingConfigurationBuilder removeScheme(final String scheme)
-    {
+    public LoadingConfigurationBuilder removeScheme(final String scheme) {
         /*
          * No checks for null or anything there: adding entries will have been
          * filtered out anyway, so no harm.
@@ -203,8 +206,7 @@ public final class LoadingConfigurationBuilder
     }
 
     public LoadingConfigurationBuilder setURITranslatorConfiguration(
-        final URITranslatorConfiguration translatorCfg)
-    {
+            final URITranslatorConfiguration translatorCfg) {
         this.translatorCfg = translatorCfg;
         return this;
     }
@@ -219,8 +221,7 @@ public final class LoadingConfigurationBuilder
      * @throws NullPointerException dereferencing mode is null
      */
     public LoadingConfigurationBuilder dereferencing(
-        final Dereferencing dereferencing)
-    {
+            final Dereferencing dereferencing) {
         BUNDLE.checkNotNull(dereferencing, "loadingCfg.nullDereferencingMode");
         this.dereferencing = dereferencing;
         return this;
@@ -234,20 +235,19 @@ public final class LoadingConfigurationBuilder
      *
      * <p>Note that the syntax of the schema is not checked at this stage.</p>
      *
-     * @param uri the URI to use
+     * @param uri    the URI to use
      * @param schema the schema
      * @return this
-     * @throws NullPointerException the URI or schema is null
+     * @throws NullPointerException     the URI or schema is null
      * @throws IllegalArgumentException a schema already exists at this URI
      * @see JsonRef
      */
     public LoadingConfigurationBuilder preloadSchema(final String uri,
-        final JsonNode schema)
-    {
+                                                     final JsonNode schema) {
         BUNDLE.checkNotNull(schema, "loadingCfg.nullSchema");
         final URI key = getLocator(uri);
         BUNDLE.checkArgumentPrintf(preloadedSchemas.put(key, schema) == null,
-            "loadingCfg.duplicateURI", key);
+                "loadingCfg.duplicateURI", key);
         return this;
     }
 
@@ -258,13 +258,12 @@ public final class LoadingConfigurationBuilder
      *
      * @param schema the schema
      * @return this
-     * @throws NullPointerException schema is null
+     * @throws NullPointerException     schema is null
      * @throws IllegalArgumentException schema has no {@code id}, or its {@code
-     * id} is not an absolute JSON Reference
+     *                                  id} is not an absolute JSON Reference
      * @see JsonRef
      */
-    public LoadingConfigurationBuilder preloadSchema(final JsonNode schema)
-    {
+    public LoadingConfigurationBuilder preloadSchema(final JsonNode schema) {
         final JsonNode node = schema.path("id");
         BUNDLE.checkArgument(node.isString(), "loadingCfg.noIDInSchema");
         return preloadSchema(node.stringValue(), schema);
@@ -277,35 +276,47 @@ public final class LoadingConfigurationBuilder
      * comments, single quotes, unquoted field names, etc.</p>
      *
      * @param feature the JsonParser feature to enable
-     * @throws NullPointerException feature is null
      * @return this
+     * @throws NullPointerException feature is null
      * @see StreamReadFeature
      */
     public LoadingConfigurationBuilder addParserFeature(
-        final StreamReadFeature feature)
-    {
+            final StreamReadFeature feature) {
         BUNDLE.checkNotNull(feature, "loadingCfg.nullJsonParserFeature");
         parserFeatures.add(feature);
+        return this;
+    }
+
+    public LoadingConfigurationBuilder addJsonReadFeature(
+            final JsonReadFeature feature) {
+        BUNDLE.checkNotNull(feature, "loadingCfg.nullJsonReadFeature");
+        jsonReadFeatures.add(feature);
         return this;
     }
 
     /**
      * Remove a JSON parser feature
      *
-     * <p>Note that attempts to remove {@link Feature#AUTO_CLOSE_SOURCE} will
+     * <p>Note that attempts to remove {@link AUTO_CLOSE_SOURCE} will
      * be ignored for safety reasons.</p>
      *
      * @param feature the feature to remove
-     * @throws NullPointerException feature is null
      * @return this
+     * @throws NullPointerException feature is null
      * @see #addParserFeature(StreamReadFeature)
      */
     public LoadingConfigurationBuilder removeParserFeature(
-        final StreamReadFeature feature)
-    {
+            final StreamReadFeature feature) {
         BUNDLE.checkNotNull(feature, "loadingCfg.nullJsonParserFeature");
         if (feature != AUTO_CLOSE_SOURCE)
             parserFeatures.remove(feature);
+        return this;
+    }
+
+    public LoadingConfigurationBuilder removeJsonFeature(
+            final JsonReadFeature feature) {
+        BUNDLE.checkNotNull(feature, "loadingCfg.nullJsonReadFeature");
+        parserFeatures.remove(feature);
         return this;
     }
 
@@ -315,13 +326,11 @@ public final class LoadingConfigurationBuilder
      * @return a frozen copy of this builder
      */
     @Override
-    public LoadingConfiguration freeze()
-    {
+    public LoadingConfiguration freeze() {
         return new LoadingConfiguration(this);
     }
 
-    private static URI getLocator(final String input)
-    {
+    private static URI getLocator(final String input) {
         final JsonRef ref;
         try {
             ref = JsonRef.fromString(input);
@@ -329,7 +338,7 @@ public final class LoadingConfigurationBuilder
             throw new IllegalArgumentException(e.getMessage());
         }
         BUNDLE.checkArgumentPrintf(ref.isAbsolute(), "jsonRef.notAbsolute",
-            ref);
+                ref);
         return ref.getLocator();
     }
 }

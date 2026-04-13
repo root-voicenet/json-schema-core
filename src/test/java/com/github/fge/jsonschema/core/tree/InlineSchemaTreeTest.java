@@ -63,8 +63,8 @@ public final class InlineSchemaTreeTest
 
         for (final JsonNode lookup: lookups)
             set.add(new Object[] {
-                JsonRef.fromString(lookup.get("id").textValue()),
-                new JsonPointer(lookup.get("ptr").textValue())
+                JsonRef.fromString(lookup.get("id").stringValue()),
+                new JsonPointer(lookup.get("ptr").stringValue())
             });
 
         return set.iterator();
