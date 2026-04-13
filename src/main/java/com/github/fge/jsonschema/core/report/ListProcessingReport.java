@@ -19,10 +19,10 @@
 
 package com.github.fge.jsonschema.core.report;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jsonschema.core.util.AsJson;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -37,7 +37,7 @@ public final class ListProcessingReport
     extends AbstractProcessingReport
     implements AsJson
 {
-    private static final JsonNodeFactory FACTORY = JacksonUtils.nodeFactory();
+    private static final JsonNodeFactory FACTORY = Jackson3Compat.nodeFactory();
 
     private final List<ProcessingMessage> messages = Lists.newArrayList();
 

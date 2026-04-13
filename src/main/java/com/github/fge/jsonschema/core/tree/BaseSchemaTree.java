@@ -19,12 +19,11 @@
 
 package com.github.fge.jsonschema.core.tree;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.ObjectNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
-import com.github.fge.jackson.jsonpointer.TokenResolver;
 import com.github.fge.jsonschema.core.exceptions.JsonReferenceException;
 import com.github.fge.jsonschema.core.ref.JsonRef;
 import com.github.fge.jsonschema.core.tree.key.SchemaKey;
@@ -46,7 +45,7 @@ import javax.annotation.concurrent.Immutable;
 public abstract class BaseSchemaTree
     implements SchemaTree
 {
-    private static final JsonNodeFactory FACTORY = JacksonUtils.nodeFactory();
+    private static final JsonNodeFactory FACTORY = Jackson3Compat.nodeFactory();
 
     protected final SchemaKey key;
 
@@ -100,7 +99,7 @@ public abstract class BaseSchemaTree
 
         this.baseNode = baseNode;
         this.pointer = pointer;
-        node = pointer.path(baseNode);
+        node = Jackson3Compat.path(pointer, baseNode);
 
         final JsonRef loadingRef = key.getLoadingRef();
         final JsonRef ref = idFromNode(baseNode);
@@ -120,7 +119,7 @@ public abstract class BaseSchemaTree
 
         this.baseNode = baseNode;
         this.pointer = pointer;
-        node = pointer.path(baseNode);
+        node = Jackson3Compat.path(pointer, baseNode);
 
         final JsonRef ref = idFromNode(baseNode);
 
@@ -138,7 +137,7 @@ public abstract class BaseSchemaTree
         baseNode = other.baseNode;
 
         pointer = newPointer;
-        node = newPointer.path(baseNode);
+        node = Jackson3Compat.path(newPointer, baseNode);
 
         startingRef = other.startingRef;
         currentRef = nextRef(startingRef, newPointer, baseNode);
@@ -215,8 +214,8 @@ public abstract class BaseSchemaTree
     {
         final ObjectNode ret = FACTORY.objectNode();
 
-        ret.set("loadingURI", FACTORY.textNode(key.getLoadingRef().toString()));
-        ret.set("pointer", FACTORY.textNode(pointer.toString()));
+        ret.set("loadingURI", FACTORY.stringNode(key.getLoadingRef().toString()));
+        ret.set("pointer", FACTORY.stringNode(pointer.toString()));
 
         return ret;
     }
@@ -272,11 +271,11 @@ public abstract class BaseSchemaTree
     @Nullable
     protected static JsonRef idFromNode(final JsonNode node)
     {
-        if (!node.path("id").isTextual())
+        if (!node.path("id").isString())
             return null;
 
         try {
-            return JsonRef.fromString(node.get("id").textValue());
+            return JsonRef.fromString(node.get("id").stringValue());
         } catch (JsonReferenceException ignored) {
             return null;
         }
@@ -296,11 +295,25 @@ public abstract class BaseSchemaTree
         JsonRef ret = startingRef;
         JsonRef idRef;
         JsonNode node = startingNode;
+        final String pointer = ptr.toString();
 
-        for (final TokenResolver<JsonNode> resolver: ptr) {
-            node = resolver.get(node);
-            if (node == null)
+        if (pointer.isEmpty())
+            return ret;
+
+        final String[] tokens = pointer.substring(1).split("/", -1);
+
+        for (final String rawToken: tokens) {
+            final String token = decodePointerToken(rawToken);
+
+            if (node.isArray() && token.matches("\\d+")) {
+                node = node.path(Integer.parseInt(token));
+            } else {
+                node = node.path(token);
+            }
+
+            if (node.isMissingNode())
                 break;
+
             idRef = idFromNode(node);
             if (idRef != null)
                 ret = ret.resolve(idRef);
@@ -309,15 +322,20 @@ public abstract class BaseSchemaTree
         return ret;
     }
 
+    private static String decodePointerToken(final String rawToken)
+    {
+        return rawToken.replace("~1", "/").replace("~0", "~");
+    }
+
     private static JsonRef extractDollarSchema(final JsonNode schema)
     {
         final JsonNode node = schema.path("$schema");
 
-        if (!node.isTextual())
+        if (!node.isString())
             return JsonRef.emptyRef();
 
         try {
-            final JsonRef ref = JsonRef.fromString(node.textValue());
+            final JsonRef ref = JsonRef.fromString(node.stringValue());
             return ref.isAbsolute() ? ref : JsonRef.emptyRef();
         } catch (JsonReferenceException ignored) {
             return JsonRef.emptyRef();

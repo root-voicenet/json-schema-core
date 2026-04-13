@@ -40,7 +40,7 @@ public class ProcessingException
     /**
      * The internal message
      */
-    private final ProcessingMessage processingMessage;
+    private final transient ProcessingMessage processingMessage;
 
     public ProcessingException()
     {

@@ -50,7 +50,7 @@ public final class URISyntaxChecker
         final SchemaTree tree)
         throws ProcessingException
     {
-        final String s = getNode(tree).textValue();
+        final String s = getNode(tree).stringValue();
 
         try {
             final URI uri = new URI(s);

@@ -19,8 +19,8 @@
 
 package com.github.fge.jsonschema.core.tree;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.ref.JsonRef;
 import com.github.fge.jsonschema.core.tree.key.SchemaKey;
@@ -148,7 +148,7 @@ public final class InlineSchemaTree
         if (ret == null)
             return null;
 
-        return ret.path(baseNode).isMissingNode() ? null : ret;
+        return Jackson3Compat.path(ret, baseNode).isMissingNode() ? null : ret;
     }
 
     @Nullable
@@ -235,7 +235,7 @@ public final class InlineSchemaTree
             targetMap.put(nextRef, ptr);
         }
 
-        final Map<String, JsonNode> tmp = JacksonUtils.asMap(node);
+        final Map<String, JsonNode> tmp = Jackson3Compat.asMap(node);
 
         for (final Map.Entry<String, JsonNode> entry: tmp.entrySet())
             walk(nextRef, entry.getValue(), ptr.append(entry.getKey()), absMap,

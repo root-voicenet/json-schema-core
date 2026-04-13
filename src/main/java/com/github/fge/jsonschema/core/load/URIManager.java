@@ -19,11 +19,10 @@
 
 package com.github.fge.jsonschema.core.load;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jackson.JsonNodeReader;
+import tools.jackson.core.exc.StreamReadException;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
 import com.github.fge.jsonschema.core.load.download.URIDownloader;
@@ -56,7 +55,7 @@ public final class URIManager
 
     private final Map<String, URIDownloader> downloaders;
 
-    private final JsonNodeReader reader;
+    private final ObjectMapper reader;
 
     public URIManager()
     {
@@ -102,11 +101,11 @@ public final class URIManager
 
             try {
                 in = closer.register(downloader.fetch(uri));
-                return reader.fromInputStream(in);
-            } catch (JsonMappingException e) {
+                return reader.readTree(in);
+            } catch (DatabindException e) {
                 throw new ProcessingException(new ProcessingMessage()
                     .setMessage(e.getOriginalMessage()).put("uri", uri));
-            } catch (JsonParseException e) {
+            } catch (StreamReadException e) {
                 throw new ProcessingException(new ProcessingMessage()
                     .setMessage(BUNDLE.getMessage("uriManager.uriNotJson"))
                     .putArgument("uri", uri)

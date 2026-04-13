@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 final class SimpleValueHolder<T>
     extends ValueHolder<T>
@@ -32,6 +32,6 @@ final class SimpleValueHolder<T>
     @Override
     protected JsonNode valueAsJson()
     {
-        return FACTORY.textNode(value.getClass().getCanonicalName());
+        return FACTORY.stringNode(value.getClass().getCanonicalName());
     }
 }

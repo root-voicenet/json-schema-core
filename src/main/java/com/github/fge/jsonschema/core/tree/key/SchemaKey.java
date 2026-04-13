@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.tree.key;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.load.download.URIDownloader;
 import com.github.fge.jsonschema.core.ref.JsonRef;
 import com.github.fge.jsonschema.core.tree.SchemaTree;

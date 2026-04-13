@@ -17,10 +17,13 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv4;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonNumEquivalence;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.JsonNumEquivalence3;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -42,7 +45,7 @@ import java.util.Set;
 public final class RequiredSyntaxChecker
     extends AbstractSyntaxChecker
 {
-    private static final Equivalence<JsonNode> EQUIVALENCE = new JsonNumEquivalence();
+    private static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence3.getInstance();
 
     private static final SyntaxChecker INSTANCE = new RequiredSyntaxChecker();
 
@@ -79,7 +82,7 @@ public final class RequiredSyntaxChecker
         for (int index = 0; index < size; index++) {
             element = node.get(index);
             uniqueElements = set.add(EQUIVALENCE.wrap(element));
-            type = NodeType.getNodeType(element);
+            type = Jackson3Compat.getNodeType(element);
             if (type != NodeType.STRING)
                 report.error(newMsg(tree, bundle,
                     "common.array.element.incorrectType")

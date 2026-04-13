@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.tree;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 
 import javax.annotation.concurrent.Immutable;
@@ -51,7 +51,7 @@ public final class SimpleJsonTree
     public JsonNode asJson()
     {
         return FACTORY.objectNode()
-            .set("pointer", FACTORY.textNode(pointer.toString()));
+            .set("pointer", FACTORY.stringNode(pointer.toString()));
     }
 
     @Override

@@ -17,10 +17,13 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv4;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonNumEquivalence;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.JsonNumEquivalence3;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -45,7 +48,7 @@ public final class DraftV4TypeSyntaxChecker
     private static final EnumSet<NodeType> ALL_TYPES
         = EnumSet.allOf(NodeType.class);
 
-    private static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence.getInstance();
+    private static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence3.getInstance();
 
     private static final SyntaxChecker INSTANCE
         = new DraftV4TypeSyntaxChecker();
@@ -69,8 +72,8 @@ public final class DraftV4TypeSyntaxChecker
         final JsonNode node = getNode(tree);
 
 
-        if (node.isTextual()) {
-            final String s = node.textValue();
+        if (node.isString()) {
+            final String s = node.stringValue();
             if (NodeType.fromName(s) == null)
                 report.error(newMsg(tree, bundle,
                     "common.typeDisallow.primitiveType.unknown")
@@ -93,7 +96,7 @@ public final class DraftV4TypeSyntaxChecker
 
         for (int index = 0; index <size; index++) {
             element = node.get(index);
-            type = NodeType.getNodeType(element);
+            type = Jackson3Compat.getNodeType(element);
             uniqueElements = set.add(EQUIVALENCE.wrap(element));
             if (type != NodeType.STRING) {
                 report.error(newMsg(tree, bundle,
@@ -103,7 +106,7 @@ public final class DraftV4TypeSyntaxChecker
                     .putArgument("found", type));
                 continue;
             }
-            final String found = element.textValue();
+            final String found = element.stringValue();
             if (NodeType.fromName(found) == null)
                 report.error(newMsg(tree, bundle,
                     "common.typeDisallow.primitiveType.unknown")

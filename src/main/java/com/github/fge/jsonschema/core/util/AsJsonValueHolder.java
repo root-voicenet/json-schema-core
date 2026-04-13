@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import javax.annotation.concurrent.Immutable;
 

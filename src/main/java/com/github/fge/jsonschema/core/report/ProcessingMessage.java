@@ -19,12 +19,12 @@
 
 package com.github.fge.jsonschema.core.report;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import tools.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.ObjectNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jsonschema.core.exceptions.ExceptionProvider;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.messages.JsonSchemaCoreMessageBundle;
@@ -79,7 +79,7 @@ public final class ProcessingMessage
     private static final MessageBundle BUNDLE
         = MessageBundles.getBundle(JsonSchemaCoreMessageBundle.class);
 
-    private static final JsonNodeFactory FACTORY = JacksonUtils.nodeFactory();
+    private static final JsonNodeFactory FACTORY = Jackson3Compat.nodeFactory();
 
     /**
      * This is where all key/value pairs go
@@ -117,7 +117,7 @@ public final class ProcessingMessage
      */
     public String getMessage()
     {
-        return map.containsKey("message") ? map.get("message").textValue()
+        return map.containsKey("message") ? map.get("message").stringValue()
             : "(no message)";
     }
 
@@ -242,7 +242,7 @@ public final class ProcessingMessage
      */
     public ProcessingMessage put(final String key, final String value)
     {
-        return value == null ? putNull(key) : put(key, FACTORY.textNode(value));
+        return value == null ? putNull(key) : put(key, FACTORY.stringNode(value));
     }
 
     /**
@@ -284,7 +284,7 @@ public final class ProcessingMessage
     {
         return value == null
             ? putNull(key)
-            : put(key, FACTORY.textNode(value.toString()));
+            : put(key, FACTORY.stringNode(value.toString()));
     }
 
     /**
@@ -321,7 +321,7 @@ public final class ProcessingMessage
         for (final T value: values)
             node.add(value == null
                 ? FACTORY.nullNode()
-                : FACTORY.textNode(value.toString()));
+                : FACTORY.stringNode(value.toString()));
         return put(key, node);
     }
 
@@ -349,11 +349,11 @@ public final class ProcessingMessage
             args.add(value);
         if (!map.containsKey("message"))
             return;
-        final String fmt = map.get("message").textValue();
+        final String fmt = map.get("message").stringValue();
         try {
             final String formatted = new Formatter()
                 .format(fmt, args.toArray()).toString();
-            map.put("message", FACTORY.textNode(formatted));
+            map.put("message", FACTORY.stringNode(formatted));
         } catch (IllegalFormatException ignored) {
         }
     }
@@ -402,7 +402,7 @@ public final class ProcessingMessage
     {
         final Map<String, JsonNode> tmp = Maps.newLinkedHashMap(map);
         final JsonNode node = tmp.remove("message");
-        final String message = node == null ? "(no message)": node.textValue();
+        final String message = node == null ? "(no message)": node.stringValue();
         final StringBuilder sb = new StringBuilder().append(level).append(": ");
         sb.append(message);
         for (final Map.Entry<String, JsonNode> entry: tmp.entrySet())

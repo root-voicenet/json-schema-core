@@ -60,7 +60,7 @@ public final class PatternPropertiesSyntaxChecker
         /*
          * Check that the member names are regexes
          */
-        final Set<String> set = Sets.newHashSet(getNode(tree).fieldNames());
+        final Set<String> set = Sets.newHashSet(getNode(tree).propertyNames());
 
         for (final String s: Ordering.natural().sortedCopy(set))
             if (!RegexECMA262Helper.regexIsValid(s))

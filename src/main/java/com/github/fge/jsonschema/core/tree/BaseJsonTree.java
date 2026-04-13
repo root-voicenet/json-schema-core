@@ -19,9 +19,9 @@
 
 package com.github.fge.jsonschema.core.tree;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 
 /**
@@ -30,7 +30,7 @@ import com.github.fge.jackson.jsonpointer.JsonPointer;
 public abstract class BaseJsonTree
     implements JsonTree
 {
-    protected static final JsonNodeFactory FACTORY = JacksonUtils.nodeFactory();
+    protected static final JsonNodeFactory FACTORY = Jackson3Compat.nodeFactory();
 
     /**
      * The initial node
@@ -70,7 +70,7 @@ public abstract class BaseJsonTree
     protected BaseJsonTree(final JsonNode baseNode, final JsonPointer pointer)
     {
         this.baseNode = baseNode;
-        node = pointer.path(baseNode);
+        node = Jackson3Compat.path(pointer, baseNode);
         this.pointer = pointer;
     }
 

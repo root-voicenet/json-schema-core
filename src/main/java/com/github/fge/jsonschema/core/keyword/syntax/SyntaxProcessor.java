@@ -17,9 +17,12 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -75,7 +78,7 @@ public final class SyntaxProcessor
         throws ProcessingException
     {
         final JsonNode node = tree.getNode();
-        final NodeType type = NodeType.getNodeType(node);
+        final NodeType type = Jackson3Compat.getNodeType(node);
 
         /*
          * Barf if not an object, and don't even try to go any further
@@ -95,7 +98,7 @@ public final class SyntaxProcessor
         final Map<String, SyntaxChecker> map = Maps.newTreeMap();
         map.putAll(checkers);
 
-        final Set<String> fields = Sets.newHashSet(node.fieldNames());
+        final Set<String> fields = Sets.newHashSet(node.propertyNames());
         map.keySet().retainAll(fields);
         fields.removeAll(map.keySet());
 

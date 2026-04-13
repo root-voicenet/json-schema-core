@@ -57,7 +57,7 @@ public final class PatternSyntaxChecker
         final SchemaTree tree)
         throws ProcessingException
     {
-        final String value = getNode(tree).textValue();
+        final String value = getNode(tree).stringValue();
 
         if (!RegexECMA262Helper.regexIsValid(value))
             report.error(newMsg(tree, bundle, "common.invalidRegex")

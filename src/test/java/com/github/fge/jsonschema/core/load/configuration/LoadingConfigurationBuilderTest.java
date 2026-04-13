@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.load.configuration;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.JacksonUtils;
 import com.github.fge.jackson.JsonNumEquals;
 import com.github.fge.jsonschema.SchemaVersion;

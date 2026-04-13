@@ -19,8 +19,8 @@
 
 package com.github.fge.jsonschema;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.ref.JsonRef;
 
 import java.io.IOException;
@@ -63,7 +63,7 @@ public enum SchemaVersion
         try {
             location = URI.create(uri);
             final URL url = SchemaVersion.class.getResource(resource);
-            schema = JsonLoader.fromURL(url);
+            schema = new ObjectMapper().readTree(url.openStream());
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }

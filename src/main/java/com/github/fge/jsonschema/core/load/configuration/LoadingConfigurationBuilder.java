@@ -19,8 +19,8 @@
 
 package com.github.fge.jsonschema.core.load.configuration;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.JsonNode;
 import com.github.fge.Thawed;
 import com.github.fge.jsonschema.SchemaVersion;
 import com.github.fge.jsonschema.core.exceptions.JsonReferenceException;
@@ -39,7 +39,7 @@ import java.net.URI;
 import java.util.EnumSet;
 import java.util.Map;
 
-import static com.fasterxml.jackson.core.JsonParser.*;
+import static tools.jackson.core.StreamReadFeature.*;
 
 /**
  * Loading configuration (mutable instance)
@@ -56,14 +56,14 @@ public final class LoadingConfigurationBuilder
      * Default JsonParser feature set. Unfortunately, Jackson does not use
      * EnumSets to collect them, so we have to do that...
      */
-    private static final EnumSet<JsonParser.Feature> DEFAULT_PARSER_FEATURES;
+    private static final EnumSet<StreamReadFeature> DEFAULT_PARSER_FEATURES;
     
     private static final int DEFAULT_CACHE_SIZE = 512;
 
     static {
-        DEFAULT_PARSER_FEATURES = EnumSet.noneOf(JsonParser.Feature.class);
+        DEFAULT_PARSER_FEATURES = EnumSet.noneOf(StreamReadFeature.class);
 
-        for (final JsonParser.Feature feature: JsonParser.Feature.values())
+        for (final StreamReadFeature feature: StreamReadFeature.values())
             if (feature.enabledByDefault())
                 DEFAULT_PARSER_FEATURES.add(feature);
     }
@@ -104,7 +104,7 @@ public final class LoadingConfigurationBuilder
     /**
      * Set of JsonParser features to be enabled while loading schemas
      */
-    final EnumSet<JsonParser.Feature> parserFeatures;
+    final EnumSet<StreamReadFeature> parserFeatures;
 
     /**
      * Return a new, default mutable loading configuration
@@ -266,8 +266,8 @@ public final class LoadingConfigurationBuilder
     public LoadingConfigurationBuilder preloadSchema(final JsonNode schema)
     {
         final JsonNode node = schema.path("id");
-        BUNDLE.checkArgument(node.isTextual(), "loadingCfg.noIDInSchema");
-        return preloadSchema(node.textValue(), schema);
+        BUNDLE.checkArgument(node.isString(), "loadingCfg.noIDInSchema");
+        return preloadSchema(node.stringValue(), schema);
     }
 
     /**
@@ -279,10 +279,10 @@ public final class LoadingConfigurationBuilder
      * @param feature the JsonParser feature to enable
      * @throws NullPointerException feature is null
      * @return this
-     * @see Feature
+     * @see StreamReadFeature
      */
     public LoadingConfigurationBuilder addParserFeature(
-        final JsonParser.Feature feature)
+        final StreamReadFeature feature)
     {
         BUNDLE.checkNotNull(feature, "loadingCfg.nullJsonParserFeature");
         parserFeatures.add(feature);
@@ -298,13 +298,13 @@ public final class LoadingConfigurationBuilder
      * @param feature the feature to remove
      * @throws NullPointerException feature is null
      * @return this
-     * @see #addParserFeature(JsonParser.Feature)
+     * @see #addParserFeature(StreamReadFeature)
      */
     public LoadingConfigurationBuilder removeParserFeature(
-        final JsonParser.Feature feature)
+        final StreamReadFeature feature)
     {
         BUNDLE.checkNotNull(feature, "loadingCfg.nullJsonParserFeature");
-        if (feature != JsonParser.Feature.AUTO_CLOSE_SOURCE)
+        if (feature != AUTO_CLOSE_SOURCE)
             parserFeatures.remove(feature);
         return this;
     }

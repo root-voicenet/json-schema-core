@@ -19,9 +19,9 @@
 
 package com.github.fge.jsonschema.core.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.JsonNodeFactory;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jsonschema.core.processing.Processor;
 import com.github.fge.jsonschema.core.report.MessageProvider;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
@@ -43,7 +43,7 @@ import javax.annotation.concurrent.Immutable;
 public abstract class ValueHolder<T>
     implements MessageProvider
 {
-    protected static final JsonNodeFactory FACTORY = JacksonUtils.nodeFactory();
+    protected static final JsonNodeFactory FACTORY = Jackson3Compat.nodeFactory();
 
     private final String name;
     protected final T value;

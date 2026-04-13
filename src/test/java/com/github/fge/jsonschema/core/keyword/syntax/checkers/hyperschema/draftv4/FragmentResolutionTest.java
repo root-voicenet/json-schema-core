@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.hyperschema.draftv4;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import tools.jackson.core.JsonProcessingException;
 
 public final class FragmentResolutionTest
     extends DraftV4HyperSchemaSyntaxCheckersTest

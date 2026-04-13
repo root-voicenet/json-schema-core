@@ -17,10 +17,13 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv3;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonNumEquivalence;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.JsonNumEquivalence3;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -46,7 +49,7 @@ public final class DraftV3TypeKeywordSyntaxChecker
 {
     private static final String ANY = "any";
     private static final Equivalence<JsonNode> EQUIVALENCE
-        = JsonNumEquivalence.getInstance();
+        = JsonNumEquivalence3.getInstance();
 
     public DraftV3TypeKeywordSyntaxChecker(final String keyword)
     {
@@ -61,8 +64,8 @@ public final class DraftV3TypeKeywordSyntaxChecker
     {
         final JsonNode node = tree.getNode().get(keyword);
 
-        if (node.isTextual()) {
-            final String found = node.textValue();
+        if (node.isString()) {
+            final String found = node.stringValue();
             if (!typeIsValid(found))
                 report.error(newMsg(tree, bundle,
                     "common.typeDisallow.primitiveType.unknown")
@@ -80,7 +83,7 @@ public final class DraftV3TypeKeywordSyntaxChecker
 
         for (int index = 0; index < size; index++) {
             element = node.get(index);
-            type = NodeType.getNodeType(element);
+            type = Jackson3Compat.getNodeType(element);
             uniqueItems = set.add(EQUIVALENCE.wrap(element));
             if (type == OBJECT) {
                 pointers.add(JsonPointer.of(keyword, index));
@@ -94,11 +97,11 @@ public final class DraftV3TypeKeywordSyntaxChecker
                     .putArgument("found", type));
                 continue;
             }
-            if (!typeIsValid(element.textValue()))
+            if (!typeIsValid(element.stringValue()))
                 report.error(newMsg(tree, bundle,
                     "common.typeDisallow.primitiveType.unknown")
                     .put("index", index)
-                    .putArgument("found", element.textValue())
+                    .putArgument("found", element.stringValue())
                     .putArgument("valid", EnumSet.allOf(NodeType.class)));
         }
 

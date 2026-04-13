@@ -19,8 +19,8 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv3;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JacksonUtils;
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -58,7 +58,7 @@ public final class DraftV3PropertiesSyntaxChecker
         throws ProcessingException
     {
         final SortedMap<String, JsonNode> map = Maps.newTreeMap();
-        map.putAll(JacksonUtils.asMap(tree.getNode().get(keyword)));
+        map.putAll(Jackson3Compat.asMap(tree.getNode().get(keyword)));
 
         String member;
         JsonNode required;
@@ -69,7 +69,7 @@ public final class DraftV3PropertiesSyntaxChecker
             required = entry.getValue().get("required");
             if (required == null)
                 continue;
-            type = NodeType.getNodeType(required);
+            type = Jackson3Compat.getNodeType(required);
             if (type != NodeType.BOOLEAN) {
                 report.error(newMsg(tree, bundle,
                     "draftv3.properties.required.incorrectType")

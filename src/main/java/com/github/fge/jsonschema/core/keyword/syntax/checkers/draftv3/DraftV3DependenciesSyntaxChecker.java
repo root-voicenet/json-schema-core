@@ -17,9 +17,12 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.draftv3;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
@@ -60,7 +63,7 @@ public final class DraftV3DependenciesSyntaxChecker
         final JsonNode node = getNode(tree).get(name);
         NodeType type;
 
-        type = NodeType.getNodeType(node);
+        type = Jackson3Compat.getNodeType(node);
 
         if (type == NodeType.STRING)
             return;
@@ -93,7 +96,7 @@ public final class DraftV3DependenciesSyntaxChecker
 
         for (int index = 0; index < size; index++) {
             element = node.get(index);
-            type = NodeType.getNodeType(element);
+            type = Jackson3Compat.getNodeType(element);
             uniqueElements = set.add(EQUIVALENCE.wrap(element));
             if (type == NodeType.STRING)
                 continue;

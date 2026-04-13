@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.helpers;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.InvalidSchemaException;
@@ -72,7 +72,7 @@ public abstract class SchemaMapSyntaxChecker
         final JsonNode node)
     {
         // We know this is an object, so...
-        final Set<String> set = Sets.newHashSet(node.fieldNames());
+        final Set<String> set = Sets.newHashSet(node.propertyNames());
         for (final String s: Ordering.natural().sortedCopy(set))
             pointers.add(JsonPointer.of(keyword, s));
     }

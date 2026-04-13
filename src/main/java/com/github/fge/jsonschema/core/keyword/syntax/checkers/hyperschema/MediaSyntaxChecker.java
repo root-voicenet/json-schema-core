@@ -17,9 +17,12 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.hyperschema;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -72,8 +75,8 @@ public final class MediaSyntaxChecker
 
         subNode = node.path(BINARY_ENCODING_FIELDNAME);
         if (!subNode.isMissingNode()) {
-            type = NodeType.getNodeType(subNode);
-            value = subNode.textValue();
+            type = Jackson3Compat.getNodeType(subNode);
+            value = subNode.stringValue();
             if (value == null)
                 report.error(newMsg(tree, bundle,
                     "draftv4.media.binaryEncoding.incorrectType")
@@ -89,14 +92,14 @@ public final class MediaSyntaxChecker
         subNode = node.path(TYPE_FIELDNAME);
         if (subNode.isMissingNode())
             return;
-        type = NodeType.getNodeType(subNode);
+        type = Jackson3Compat.getNodeType(subNode);
         if (type != NodeType.STRING) {
             report.error(newMsg(tree, bundle,
                 "draftv4.media.type.incorrectType")
                 .put("expected", NodeType.STRING).putArgument("found", type));
             return;
         }
-        value = subNode.textValue();
+        value = subNode.stringValue();
         try {
             MediaType.parse(value);
         } catch (IllegalArgumentException ignored) {

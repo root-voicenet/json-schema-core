@@ -21,22 +21,18 @@ buildscript {
   repositories {
     mavenCentral()
   }
-  dependencies {
-    classpath 'biz.aQute.bnd:biz.aQute.bnd.gradle:4.2.0'
-  }
 }
 
 plugins {
-    id("net.ltgt.errorprone") version "0.8.1" apply false
+    id("biz.aQute.bnd.builder") version "7.2.3" apply false
 }
 
 apply(plugin: "java");
-apply(plugin: "maven");
+apply(plugin: "maven-publish");
 apply(plugin: "signing");
 apply(plugin: "biz.aQute.bnd.builder");
 apply(plugin: "idea");
 apply(plugin: "eclipse");
-apply(plugin: "net.ltgt.errorprone");
 
 apply(from: "project.gradle");
 
@@ -66,13 +62,6 @@ repositories {
     }
 }
 
-/*
- * Add errorprone checking.
- */
-dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.3.3")
-    errorproneJavac("com.google.errorprone:javac:9+181-r4173-1")
-}
 
 /*
  * Necessary! Otherwise TestNG will not be used...
@@ -89,11 +78,7 @@ test {
 /*
  * Necessary to generate the source and javadoc jars
  */
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources";
-    from sourceSets.main.allSource;
-    duplicatesStrategy("exclude");
-}
+
 
 /*
  * Lint all the things!
@@ -118,28 +103,7 @@ javadoc {
     options.overview = "src/main/java/overview.html";
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = "javadoc";
-    from javadoc.destinationDir;
-    duplicatesStrategy("exclude");
-}
 
-artifacts {
-    archives jar;
-    archives sourcesJar;
-    archives javadocJar;
-}
-
-wrapper {
-    gradleVersion = "5.6.3";
-    distributionUrl = "https://services.gradle.org/distributions/gradle-${gradleVersion}-all.zip";
-}
-
-task pom {
-    doLast {
-        pom {}.writeTo("${projectDir}/pom.xml");
-    }
-}
 
 /*
  * SIGNING
@@ -168,68 +132,44 @@ task checkSigningRequirements {
     }
 }
 
-uploadArchives {
-    dependsOn(checkSigningRequirements);
-    repositories {
-        mavenDeployer {
-            beforeDeployment {
-                MavenDeployment deployment -> signing.signPom(deployment);
-            }
-
-            repository(url: "${sonatypeStaging}") {
-                authentication(
-                    userName: project.properties["sonatypeUsername"],
-                    password: project.properties["sonatypePassword"]
-                );
-            }
-
-            snapshotRepository(url: "${sonatypeSnapshots}") {
-                authentication(
-                    userName: project.properties["sonatypeUsername"],
-                    password: project.properties["sonatypePassword"]
-                );
-            }
-        }
-    }
-}
-
 /*
  * Configure pom.xml on install, uploadArchives
  */
-[
-    install.repositories.mavenInstaller,
-    uploadArchives.repositories.mavenDeployer
-]*.pom*.whenConfigured { pom ->
-    pom.project {
-        name "${project.name}";
-        packaging "jar";
-        description "${project.ext.description}";
-        url "${projectURL}";
+ publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = "${project.name}"
+                packaging = "jar";
+                description = "${project.ext.description}";
+                url = "${projectURL}";
 
-        scm {
-            url "${scmUrl}";
-            connection "${scmUrl}";
-            developerConnection "scm:git:${scmUrl}";
-        }
+                scm {
+                    url = "${scmUrl}";
+                    connection = "${scmUrl}";
+                    developerConnection = "scm:git:${scmUrl}";
+                }
 
-        licenses {
-            license {
-                name "Lesser General Public License, version 3 or greater";
-                url "http://www.gnu.org/licenses/lgpl.html";
-                distribution "repo";
-            };
-            license {
-                name "Apache Software License, version 2.0";
-                url "http://www.apache.org/licenses/LICENSE-2.0";
-                distribution "repo";
-            }
-        }
+                licenses {
+                    license {
+                        name = "Lesser General Public License, version 3 or greater";
+                        url = "http://www.gnu.org/licenses/lgpl.html";
+                        distribution = "repo";
+                    };
+                    license {
+                        name = "Apache Software License, version 2.0";
+                        url = "http://www.apache.org/licenses/LICENSE-2.0";
+                        distribution = "repo";
+                    }
+                }
 
-        developers {
-            developer {
-                id "huggsboson";
-                name "John Huffaker";
-                email "jhuffaker+java-json-tools@gmail.com";
+                developers {
+                    developer {
+                        id = "huggsboson";
+                        name = "John Huffaker";
+                        email = "jhuffaker+java-json-tools@gmail.com";
+                    }
+                }
             }
         }
     }

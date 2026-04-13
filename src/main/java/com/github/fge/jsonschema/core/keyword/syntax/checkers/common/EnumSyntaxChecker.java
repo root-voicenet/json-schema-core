@@ -19,8 +19,8 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.common;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonNumEquivalence;
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.JsonNumEquivalence3;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -43,7 +43,7 @@ import java.util.Set;
 public final class EnumSyntaxChecker
     extends AbstractSyntaxChecker
 {
-    private static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence.getInstance();
+    private static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence3.getInstance();
 
     private static final SyntaxChecker INSTANCE = new EnumSyntaxChecker();
 

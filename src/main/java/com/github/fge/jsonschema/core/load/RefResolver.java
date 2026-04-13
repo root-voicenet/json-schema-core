@@ -19,7 +19,7 @@
 
 package com.github.fge.jsonschema.core.load;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.JsonReferenceException;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -130,10 +130,10 @@ public final class RefResolver
     private static JsonRef nodeAsRef(final JsonNode node)
     {
         final JsonNode refNode = node.path("$ref");
-        if (!refNode.isTextual())
+        if (!refNode.isString())
             return null;
         try {
-            return JsonRef.fromString(refNode.textValue());
+            return JsonRef.fromString(refNode.stringValue());
         } catch (JsonReferenceException ignored) {
             return null;
         }

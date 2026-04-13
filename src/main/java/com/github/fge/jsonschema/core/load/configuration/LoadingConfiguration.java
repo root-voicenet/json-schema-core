@@ -19,13 +19,11 @@
 
 package com.github.fge.jsonschema.core.load.configuration;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.github.fge.Frozen;
 import com.github.fge.Thawed;
-import com.github.fge.jackson.JacksonUtils;
-import com.github.fge.jackson.JsonNodeReader;
 import com.github.fge.jsonschema.core.load.Dereferencing;
 import com.github.fge.jsonschema.core.load.SchemaLoader;
 import com.github.fge.jsonschema.core.load.URIManager;
@@ -116,17 +114,12 @@ public final class LoadingConfiguration
      * <p>The set of JavaParser features used to construct ObjectMapper/
      * ObjectReader instances used to load schemas</p>
      */
-    final EnumSet<JsonParser.Feature> parserFeatures;
+    final EnumSet<StreamReadFeature> parserFeatures;
 
     /**
-     * ObjectReader configured with enabled JsonParser features
-     *
-     * <p>Object reader configured using enabled JsonParser features and
-     * minimum requirements enforced by JacksonUtils.</p>
-     *
-     * @see JsonNodeReader
+     * ObjectMapper configured with enabled parser features.
      */
-    private final JsonNodeReader reader;
+    private final ObjectMapper reader;
 
     /**
      * Create a new, default, mutable configuration instance
@@ -169,20 +162,18 @@ public final class LoadingConfiguration
     }
 
     /**
-     * Construct a {@link JsonNodeReader}
+     * Construct a configured mapper
      *
-     * @return a JSON reader
-     * @see JsonNodeReader
-     * @see JacksonUtils#newMapper()
+     * @return a JSON mapper
      */
-    private JsonNodeReader buildReader()
+    private ObjectMapper buildReader()
     {
-        final ObjectMapper mapper = JacksonUtils.newMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
         // enable JsonParser feature configurations
-        for (final JsonParser.Feature feature : parserFeatures)
-            mapper.configure(feature, true);
-        return new JsonNodeReader(mapper);
+        for (final StreamReadFeature feature : parserFeatures)
+            mapper = mapper.rebuild().configure(feature, true).build();
+        return mapper;
     }
 
     /**
@@ -223,12 +214,11 @@ public final class LoadingConfiguration
     }
 
     /**
-     * Get a configured {@link JsonNodeReader}
+     * Get a configured JSON mapper
      *
-     * @return the JSON reader
-     * @see JsonNodeReader
+     * @return the JSON mapper
      */
-    public JsonNodeReader getReader()
+    public ObjectMapper getReader()
     {
         return reader;
     }

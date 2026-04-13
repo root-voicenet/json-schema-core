@@ -17,9 +17,12 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.hyperschema;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -77,14 +80,14 @@ public final class LinksSyntaxChecker
 
         for (int index = 0; index < size; index++) {
             ldo = getNode(tree).get(index);
-            type = NodeType.getNodeType(ldo);
+            type = Jackson3Compat.getNodeType(ldo);
             if (type != NodeType.OBJECT) {
                 report.error(LDOMsg(tree, bundle, "draftv4.ldo.incorrectType", index)
                     .put("expected", NodeType.OBJECT)
                     .putArgument("found", type));
                 continue;
             }
-            set = Sets.newHashSet(ldo.fieldNames());
+            set = Sets.newHashSet(ldo.propertyNames());
             list = Lists.newArrayList(REQUIRED_LDO_PROPERTIES);
             list.removeAll(set);
             if (!list.isEmpty()) {
@@ -115,7 +118,7 @@ public final class LinksSyntaxChecker
 
         if (checkLDOProperty(report, bundle, tree, index, "href",
             NodeType.STRING, "draftv4.ldo.href.incorrectType")) {
-            value = ldo.get("href").textValue();
+            value = ldo.get("href").stringValue();
             try {
                 new URITemplate(value);
             } catch (URITemplateParseException ignored) {
@@ -130,7 +133,7 @@ public final class LinksSyntaxChecker
 
         if (checkLDOProperty(report, bundle, tree, index, "mediaType",
             NodeType.STRING, "draftv4.ldo.mediaType.incorrectType")) {
-            value = ldo.get("mediaType").textValue();
+            value = ldo.get("mediaType").stringValue();
             try {
                 MediaType.parse(value);
             } catch (IllegalArgumentException ignored) {
@@ -145,7 +148,7 @@ public final class LinksSyntaxChecker
 
         if (checkLDOProperty(report, bundle, tree, index, "encType",
             NodeType.STRING, "draftv4.ldo.enctype.incorrectType")) {
-            value = ldo.get("encType").textValue();
+            value = ldo.get("encType").stringValue();
             try {
                 MediaType.parse(value);
             } catch (IllegalArgumentException ignored) {
@@ -172,7 +175,7 @@ public final class LinksSyntaxChecker
         if (node == null)
             return false;
 
-        final NodeType type = NodeType.getNodeType(node);
+        final NodeType type = Jackson3Compat.getNodeType(node);
 
         if (type == expected)
             return true;

@@ -17,9 +17,12 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.tree;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.ref.JsonRef;
 import com.github.fge.jsonschema.core.tree.key.SchemaKey;
@@ -105,6 +108,6 @@ public final class CanonicalSchemaTree
         if (!ref.isLegal())
             return null;
         final JsonPointer ptr = ref.getPointer();
-        return ptr.path(baseNode).isMissingNode() ? null : ptr;
+        return Jackson3Compat.path(ptr, baseNode).isMissingNode() ? null : ptr;
     }
 }

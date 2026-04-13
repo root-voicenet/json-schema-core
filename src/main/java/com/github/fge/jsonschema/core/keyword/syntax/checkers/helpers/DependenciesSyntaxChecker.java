@@ -19,9 +19,9 @@
 
 package com.github.fge.jsonschema.core.keyword.syntax.checkers.helpers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JacksonUtils;
-import com.github.fge.jackson.JsonNumEquivalence;
+import tools.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+import com.github.fge.jsonschema.core.util.JsonNumEquivalence3;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.InvalidSchemaException;
@@ -49,7 +49,7 @@ public abstract class DependenciesSyntaxChecker
     /**
      * JSON Schema equivalence
      */
-    protected static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence.getInstance();
+    protected static final Equivalence<JsonNode> EQUIVALENCE = JsonNumEquivalence3.getInstance();
 
     /**
      * Valid types for one dependency value
@@ -75,7 +75,7 @@ public abstract class DependenciesSyntaxChecker
     {
         final JsonNode node = getNode(tree);
         final Map<String, JsonNode> map = Maps.newTreeMap();
-        map.putAll(JacksonUtils.asMap(node));
+        map.putAll(Jackson3Compat.asMap(node));
 
         String key;
         JsonNode value;

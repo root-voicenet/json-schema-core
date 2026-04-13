@@ -17,9 +17,12 @@
  * - ASL 2.0: http://www.apache.org/licenses/LICENSE-2.0.txt
  */
 
+
 package com.github.fge.jsonschema.core.keyword.syntax.checkers;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.util.Jackson3Compat;
+
+import tools.jackson.databind.JsonNode;
 import com.github.fge.jackson.NodeType;
 import com.github.fge.jackson.jsonpointer.JsonPointer;
 import com.github.fge.jsonschema.core.exceptions.ExceptionProvider;
@@ -105,7 +108,7 @@ public abstract class AbstractSyntaxChecker
         throws ProcessingException
     {
         final JsonNode node = getNode(tree);
-        final NodeType type = NodeType.getNodeType(node);
+        final NodeType type = Jackson3Compat.getNodeType(node);
 
         if (!types.contains(type)) {
             report.error(newMsg(tree, bundle, "common.incorrectType")
