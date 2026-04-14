@@ -21,7 +21,7 @@
  * Project-specific settings. Unfortunately we cannot put the name in there!
  */
 group = "com.github.java-json-tools";
-version = "1.2.16";
+version = "1.2.17";
 java {
     sourceCompatibility = JavaVersion.VERSION_17;
     targetCompatibility = JavaVersion.VERSION_17; // defaults to sourceCompatibility
@@ -44,12 +44,12 @@ dependencies {
     implementation ("com.github.java-json-tools:msg-simple:1.2")
     // FIXME: no javadoc
     // FIXME: update beyond 1.7.7.x once we're Java 8 or better.
-    implementation (group: "org.mozilla", name: "rhino", version: "1.7.7.2");
+    implementation (group: "org.mozilla", name: "rhino", version: "1.7.15.1");
     implementation (group: "com.google.code.findbugs", name: "jsr305", version: "3.0.2")
     testImplementation (group: "org.testng", name: "testng", version: "7.12.0") {
-        exclude(group: "junit", module: "junit");
-        exclude(group: "org.beanshell", module: "bsh");
-        exclude(group: "org.yaml", module: "snakeyaml");
+        exclude(group: "junit", module: "junit")
+        exclude(group: "org.beanshell", module: "bsh")
+        exclude(group: "org.yaml", module: "snakeyaml")
     };
     testImplementation(group: "org.mockito", name: "mockito-core", version: "5.23.0")
     testImplementation(group: "org.assertj", name: "assertj-core", version: "2.9.1")
